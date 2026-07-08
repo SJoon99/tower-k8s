@@ -1,9 +1,14 @@
 # tower-k8s
 
-TowerX/mobilex-style GitOps root repository for the ScaleX Repo POC.
+TowerX/mobilex-style cluster preset repository for the ScaleX Repo POC.
 
-This repository is intended to be watched by the Argo CD instance that runs
-inside the `scalex-repo` vCluster on node4.
+`tower-k8s` is not the framework chart itself. It is the cluster-specific repo
+that is consumed by the SmartX-style base/framework repo:
+
+```text
+eecs-k8s      # SmartX-style base/framework repo
+tower-k8s     # TowerX/mobilex-style concrete cluster preset repo
+```
 
 ## POC topology
 
@@ -11,13 +16,18 @@ inside the `scalex-repo` vCluster on node4.
 node4 host cluster
   └─ scalex-repo vCluster
        └─ Argo CD namespace: argo
-            └─ tower-root Application -> https://github.com/SJoon99/tower-k8s.git
-                 └─ eecs-k8s child repo Application -> https://github.com/SJoon99/eecs-k8s.git
+            └─ root Application source: eecs-k8s
+            └─ cluster values/patches source: tower-k8s
 ```
 
-## Intent
+## Initial Tower feature set
 
-- `tower-k8s` owns the Tower control-plane GitOps surface.
-- `eecs-k8s` is treated as a SmartX-style child/member cluster repository.
-- The first POC keeps only the minimum values needed to prove the repo and Argo
-  ownership chain before moving OpenARK/KISS into the vCluster.
+The first POC intentionally enables only:
+
+```yaml
+features:
+  - org.ulagbulag.io/gitops
+```
+
+The eecs-k8s feature graph expands this into the minimum GitOps/Tower control
+plane surface before OpenARK/KISS and child-cluster provisioning are added.

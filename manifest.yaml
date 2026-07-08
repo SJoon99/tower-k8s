@@ -1,0 +1,12 @@
+---
+appVersion: org.ulagbulag.io/v1alpha1
+kind: Manifest
+metadata:
+  name: tower
+spec:
+  group: ops
+  phase: alpha
+  scale: small
+  users:
+    owners:
+      - SJP <sjp@example.local>
