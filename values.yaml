@@ -89,6 +89,16 @@ kiss:
   # vCluster does not define the SmartX-specific PriorityClasses used on physical clusters.
   priorityClassName: ""
   workflowPriorityClassName: ""
+  # The OpenARK KISS operator still stamps generated box-commission Jobs with
+  # k8s-cluster-critical, so Tower must provide that PriorityClass explicitly.
+  priorityClasses:
+    create: true
+    items:
+      - name: k8s-cluster-critical
+        value: 1000000000
+        globalDefault: false
+        description: Tower POC compatibility PriorityClass for OpenARK KISS Jobs.
+        preemptionPolicy: PreemptLowerPriority
   # Use the Tower KISS apiserver NodePort for later commission submit paths.
   submitBaseUrl: http://10.34.20.3:31388
   tolerations:
