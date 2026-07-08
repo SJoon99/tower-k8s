@@ -1,7 +1,7 @@
 ---
-# Tower-owned host PXE edge. Keep DHCP silent until the provisioning window.
+# Tower-owned host PXE edge. PXE advertisement is enabled for the provisioning test window.
 dnsmasq:
-  replicas: 0
+  replicas: 1
 
 # The edge dnsmasq advertises this HTTP endpoint to iPXE clients.
 assets:
