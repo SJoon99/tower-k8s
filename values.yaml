@@ -109,7 +109,7 @@ kiss:
       key:
         # Do not commit the private key. Populate through a runtime Secret/values overlay before commissioning.
         private: ""
-        public: ""
+        public: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM3SyWiIy+xPovBrSO6JsbTVaVWV+KIX6yrapYdWsrYs kiss@node4"
   os:
     dist: ubuntu
     version: "24.04"
