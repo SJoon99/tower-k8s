@@ -1,0 +1,33 @@
+{{- range $name, $child := .Values.children }}
+{{- if $child.enabled }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $name }}
+  namespace: {{ $.Values.argo.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $child.syncWave | quote }}
+spec:
+  project: {{ $.Values.argo.project }}
+  source:
+    repoURL: {{ $child.repoURL }}
+    targetRevision: {{ $child.targetRevision }}
+    path: {{ $child.path | quote }}
+    {{- with $child.helm }}
+    helm:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  destination:
+    server: {{ $child.destination.server }}
+    namespace: {{ $child.destination.namespace }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      {{- range $option := $child.syncOptions }}
+      - {{ $option }}
+      {{- end }}
+{{- end }}
+{{- end }}

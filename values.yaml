@@ -1,0 +1,46 @@
+argo:
+  namespace: argo
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+  sourceRepo:
+    url: https://github.com/SJoon99/tower-k8s.git
+    revision: main
+
+children:
+  eecs-k8s:
+    enabled: true
+    namespace: argo
+    syncWave: "10"
+    repoURL: https://github.com/SJoon99/eecs-k8s.git
+    targetRevision: main
+    path: .
+    destination:
+      # Phase 1: render/manage the SmartX-style child repo from Tower Argo.
+      # When a real child cluster is registered, change this server/name to that cluster.
+      server: https://kubernetes.default.svc
+      namespace: argo
+    helm:
+      valuesObject:
+        cluster:
+          name: eecs
+          group: ops
+        repo:
+          baseUrl: https://github.com
+          owner: SJoon99
+          name: eecs-k8s
+          revision: main
+        tower:
+          cluster: tower
+          controlPlane: false
+          domainName: scalex.local
+          group: ops
+        ingress:
+          domainName: eecs.scalex.local
+        # Keep the first Tower -> child repo proof deliberately small.
+        # Feature expansion should happen after the child cluster destination is real.
+        features:
+          - org.ulagbulag.io/gitops
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

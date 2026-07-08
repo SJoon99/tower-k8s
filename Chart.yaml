@@ -1,0 +1,6 @@
+apiVersion: v2
+name: tower-k8s
+description: TowerX/mobilex-style GitOps root for the ScaleX Repo POC
+type: application
+version: 0.1.0
+appVersion: 0.1.0
