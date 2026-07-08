@@ -32,3 +32,28 @@ apps:
         - ServerSideApply=true
         - RespectIgnoreDifferences=true
         - SkipDryRunOnMissingResource=true
+
+  karmada-members:
+    enabled: true
+    name: tower-karmada-members
+    namespace: karmada-system
+    project: tower-ops
+    destination:
+      name: tower
+    source:
+      repoURL: https://github.com/SJoon99/tower-k8s.git
+      path: apps/karmada-members
+      targetRevision: ops
+      releaseName: karmada-members
+    annotations:
+      argocd.argoproj.io/sync-wave: "30"
+    syncPolicy:
+      automated:
+        enabled: true
+        selfHeal: true
+        prune: false
+      syncOptions:
+        - CreateNamespace=true
+        - ServerSideApply=true
+        - RespectIgnoreDifferences=true
+        - SkipDryRunOnMissingResource=true

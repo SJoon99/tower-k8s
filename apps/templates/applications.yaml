@@ -84,5 +84,5 @@ spec:
       {{- range (default (list "CreateNamespace=true" "ServerSideApply=true") $syncPolicy.syncOptions) }}
       - {{ . | quote }}
       {{- end }}
-{{- end }}
+{{ end }}
 {{- end }}

@@ -1,0 +1,31 @@
+---
+karmada:
+  version: v1.18.1
+  kubeconfigSecret:
+    name: karmada-kubeconfig
+    key: kubeconfig
+  clusterNamespace: karmada-cluster
+
+job:
+  image: alpine/k8s:1.34.0
+  backoffLimit: 1
+
+members:
+  - name: b
+    argoNamespace: argo
+    argoSecret: cluster-b
+    provider: scalex-poc
+    region: tower-node4
+    labels:
+      scalex.io/site: b
+      scalex.io/role: child
+      scalex.io/topology: baremetal
+  - name: c
+    argoNamespace: argo
+    argoSecret: cluster-c
+    provider: scalex-poc
+    region: tower-node4
+    labels:
+      scalex.io/site: c
+      scalex.io/role: child
+      scalex.io/topology: baremetal
