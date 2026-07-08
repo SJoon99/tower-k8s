@@ -38,8 +38,13 @@ tower:
   domainName: scalex.local
   group: ops
 
-# vCluster Kubernetes does not populate legacy service-account-token Secrets reliably.
+# vCluster Kubernetes does not populate legacy service-account-token Secrets reliably
+# and does not carry the same scheduling labels/taints as the physical SmartX nodes.
+argoEvents:
+  vclusterSafeScheduling: true
+
 argoWorkflows:
+  vclusterSafeScheduling: true
   legacyServiceAccountTokenSecrets:
     enabled: false
 
