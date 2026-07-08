@@ -16,12 +16,10 @@ apps:
     destination:
       name: tower
     source:
-      repoURL: https://raw.githubusercontent.com/karmada-io/karmada/master/charts
-      chart: karmada
-      targetRevision: v1.18.1
-      releaseName: karmada
-    valueFiles:
-      - $cluster/apps/karmada/values.yaml
+      repoURL: https://github.com/SJoon99/tower-k8s.git
+      path: apps/karmada
+      targetRevision: ops
+      releaseName: karmada-installer
     annotations:
       argocd.argoproj.io/sync-wave: "20"
     syncPolicy:
@@ -34,16 +32,3 @@ apps:
         - ServerSideApply=true
         - RespectIgnoreDifferences=true
         - SkipDryRunOnMissingResource=true
-    ignoreDifferences:
-      - group: admissionregistration.k8s.io
-        kind: MutatingWebhookConfiguration
-        jqPathExpressions:
-          - .webhooks[].clientConfig.caBundle
-      - group: admissionregistration.k8s.io
-        kind: ValidatingWebhookConfiguration
-        jqPathExpressions:
-          - .webhooks[].clientConfig.caBundle
-      - group: apiextensions.k8s.io
-        kind: CustomResourceDefinition
-        jqPathExpressions:
-          - .spec.conversion.webhook.clientConfig.caBundle
