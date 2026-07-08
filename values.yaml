@@ -7,10 +7,14 @@ cluster:
   group: ops
   singleNode: false
   standalone: false
+  nameservers:
+    loadBalancer:
+      ipv4: ""
 
 # Keep the first Tower control-plane proof intentionally small.
 # eecs-k8s expands this through its feature dependency graph.
 features:
+  - org.ulagbulag.io/bare-metal-provisioning/kiss
   - org.ulagbulag.io/git
 
 ingress:
@@ -33,3 +37,116 @@ tower:
   controlPlane: true
   domainName: scalex.local
   group: ops
+
+# Tower KISS API is exposed so PXE-installed nodes can call /new and /commission.
+apiserver:
+  externalBaseUrl: http://10.34.20.3:31388
+  service:
+    nodePort: 31388
+
+assets:
+  baseUrl: http://10.34.20.3:32582
+  service:
+    type: NodePort
+    nodePort: 32582
+
+# Keep DHCP/PXE silent by default. Enable during a controlled provisioning window.
+dnsmasq:
+  replicas: 0
+
+bootstrapper:
+  network:
+    address:
+      ipv4: 10.34.20.3
+    seed:
+      mode: dhcp
+      match:
+        name: en*
+        macaddress: ""
+      setName: ""
+      auto:
+        strategy: fastest-reachable
+        timeoutSeconds: 90
+        probeUrls:
+          - http://mirror.kakao.com/ubuntu/
+      static:
+        address: ""
+        prefix: ""
+        gateway: ""
+        nameservers: []
+
+kiss:
+  # Use the Tower KISS apiserver NodePort for later commission submit paths.
+  submitBaseUrl: http://10.34.20.3:31388
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+  assets:
+    proxy:
+      enabled: true
+    repo:
+      ubuntu_24_04:
+        baseUrl: http://mirror.kakao.com/ubuntu-releases/24.04
+  apt:
+    mirror:
+      uri: http://mirror.kakao.com/ubuntu
+  auth:
+    ssh:
+      key:
+        # Do not commit the private key. Populate through a runtime Secret/values overlay before commissioning.
+        private: ""
+        public: ""
+  os:
+    dist: ubuntu
+    version: "24.04"
+    revision: "4"
+    channel: release
+    kernel: stable
+  group:
+    defaultRole: GenericWorker
+    enableDefaultCluster: false
+    enforceAnsibleControlPlanes: false
+    forceReset: false
+    forceResetOS: false
+    resetStorage: false
+
+network:
+  interface:
+    mtu: 9000
+  ipv4:
+    dhcp:
+      gateway: "10.34.20.3"
+      duration: 7d
+      range:
+        begin: 10.33.201.151
+        end: 10.33.201.200
+      serviceRoutes:
+        enabled: true
+    gateway: 10.47.255.254
+    subnet: 10.32.0.0/12
+  nameservers:
+    ns1: 1.1.1.1
+    ns2: 1.0.0.1
+
+pxeEdge:
+  namespace: tower-pxe-edge
+  destination:
+    name: node4-host
+  hostNetwork: true
+  priorityClassName: k8s-cluster-critical
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ""
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-role.kubernetes.io/kiss
+                operator: In
+                values:
+                  - ControlPlane
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule

@@ -1,0 +1,8 @@
+---
+# Tower-owned host PXE edge. Keep DHCP silent until the provisioning window.
+dnsmasq:
+  replicas: 0
+
+# The edge dnsmasq advertises this HTTP endpoint to iPXE clients.
+assets:
+  baseUrl: http://10.34.20.3:32582
