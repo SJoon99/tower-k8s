@@ -1,0 +1,5 @@
+---
+# Expose the Tower Argo CD UI through the host cluster load balancer.
+server:
+  service:
+    type: LoadBalancer
