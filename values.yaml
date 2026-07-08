@@ -11,7 +11,7 @@ cluster:
 # Keep the first Tower control-plane proof intentionally small.
 # eecs-k8s expands this through its feature dependency graph.
 features:
-  - org.ulagbulag.io/gitops
+  - org.ulagbulag.io/git
 
 ingress:
   domainName: tower.scalex.local
