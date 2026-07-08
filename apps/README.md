@@ -1,6 +1,14 @@
-# apps
+# Tower-local apps
 
-Optional cluster-local app values/manifests for the Tower preset.
+This Helm chart renders cluster-local Argo CD `Application` resources for apps
+that belong to the Tower cluster itself, not to the shared `eecs-k8s` SmartX app
+catalog.
 
-The first ScaleX Repo POC uses only the base `eecs-k8s` app catalog plus the
-minimal `org.ulagbulag.io/gitops` feature set.
+- `values.yaml` selects which Tower-local apps are installed.
+- `templates/applications.yaml` turns those entries into Argo CD Applications.
+- `<app>/values.yaml` contains the real upstream Helm values for that app.
+
+Current app:
+
+- `karmada` — installs the Karmada control plane into the Tower vCluster via the
+  upstream Karmada Helm chart and `apps/karmada/values.yaml`.

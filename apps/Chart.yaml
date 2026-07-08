@@ -1,0 +1,6 @@
+apiVersion: v2
+name: tower-apps
+version: 0.1.0
+appVersion: "0.1.0"
+description: Tower-local app-of-apps renderer for ScaleX POC cluster-specific applications.
+type: application

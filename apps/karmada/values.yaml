@@ -1,0 +1,48 @@
+---
+# Karmada Helm values for the Tower vCluster POC.
+# Baseline: helm show values karmada-charts/karmada --version v1.18.1
+# Keep this file as a minimal override instead of vendoring the full upstream values.yaml.
+
+installMode: host
+systemNamespace: karmada-system
+clusterDomain: cluster.local
+
+# Argo CD renders Helm charts and manages hook resources through Argo sync semantics.
+# Recreate hook Jobs safely on retry/resync, then remove successful hook artifacts.
+preInstallJob:
+  hookDeletePolicy: before-hook-creation,hook-succeeded
+preUpdateJob:
+  hookDeletePolicy: before-hook-creation,hook-succeeded
+postInstallJob:
+  hookDeletePolicy: before-hook-creation,hook-succeeded
+postDeleteJob:
+  hookDeletePolicy: before-hook-creation,hook-succeeded
+staticResourceJob:
+  ttlSecondsAfterFinished: 30
+
+# Keep the POC control plane internal to Tower first. We can expose the Karmada API
+# by changing this to NodePort/LoadBalancer after the control plane is healthy.
+apiServer:
+  serviceType: ClusterIP
+  replicaCount: 1
+
+aggregatedApiServer:
+  replicaCount: 1
+
+controllerManager:
+  replicaCount: 1
+
+scheduler:
+  replicaCount: 1
+
+webhook:
+  replicaCount: 1
+
+kubeControllerManager:
+  replicaCount: 1
+
+etcd:
+  mode: internal
+  internal:
+    replicaCount: 1
+    storageType: hostPath

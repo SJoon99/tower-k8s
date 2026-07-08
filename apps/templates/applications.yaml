@@ -1,0 +1,88 @@
+{{- $root := . -}}
+{{- range $key, $app := .Values.apps }}
+{{- $enabled := true -}}
+{{- if hasKey $app "enabled" -}}
+{{- $enabled = $app.enabled -}}
+{{- end -}}
+{{- if $enabled }}
+{{- $name := default (printf "%s-%s" $.Values.cluster.name $key) $app.name -}}
+{{- $namespace := required (printf "apps.%s.namespace is required" $key) $app.namespace -}}
+{{- $project := default $.Values.cluster.project $app.project -}}
+{{- $destination := default dict $app.destination -}}
+{{- $destinationName := default $.Values.cluster.name $destination.name -}}
+{{- $source := required (printf "apps.%s.source is required" $key) $app.source -}}
+{{- $syncPolicy := default dict $app.syncPolicy -}}
+{{- $automated := default dict $syncPolicy.automated -}}
+{{- $autoEnabled := true -}}
+{{- if hasKey $automated "enabled" -}}
+{{- $autoEnabled = $automated.enabled -}}
+{{- end -}}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $name | quote }}
+  namespace: {{ $.Values.cluster.namespace | default "argo" | quote }}
+  labels:
+    app.kubernetes.io/name: {{ $name | quote }}
+    app.kubernetes.io/instance: {{ $.Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service | quote }}
+    org.ulagbulag.io/cluster: {{ $.Values.cluster.name | quote }}
+    org.ulagbulag.io/project: {{ $project | quote }}
+  {{- with $app.annotations }}
+  annotations:
+{{ toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  project: {{ $project | quote }}
+  destination:
+    name: {{ $destinationName | quote }}
+    namespace: {{ $namespace | quote }}
+  {{- with $app.ignoreDifferences }}
+  ignoreDifferences:
+{{ toYaml . | nindent 4 }}
+  {{- end }}
+  sources:
+    - repoURL: {{ required (printf "apps.%s.source.repoURL is required" $key) $source.repoURL | quote }}
+      {{- if $source.chart }}
+      chart: {{ $source.chart | quote }}
+      {{- end }}
+      {{- if $source.path }}
+      path: {{ $source.path | quote }}
+      {{- end }}
+      targetRevision: {{ required (printf "apps.%s.source.targetRevision is required" $key) $source.targetRevision | quote }}
+      {{- if or $source.releaseName $app.valueFiles $source.helm }}
+      helm:
+        {{- if $source.releaseName }}
+        releaseName: {{ $source.releaseName | quote }}
+        {{- end }}
+        {{- with $source.helm }}
+{{ toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with $app.valueFiles }}
+        valueFiles:
+          {{- range . }}
+          - {{ . | quote }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    - repoURL: {{ $.Values.cluster.repoURL | quote }}
+      targetRevision: {{ $.Values.cluster.revision | quote }}
+      ref: {{ $.Values.cluster.ref | default "cluster" | quote }}
+  syncPolicy:
+    {{- if $autoEnabled }}
+    automated:
+      selfHeal: {{ default true $automated.selfHeal }}
+      {{- if hasKey $automated "prune" }}
+      prune: {{ $automated.prune }}
+      {{- end }}
+      {{- if hasKey $automated "allowEmpty" }}
+      allowEmpty: {{ $automated.allowEmpty }}
+      {{- end }}
+    {{- end }}
+    syncOptions:
+      {{- range (default (list "CreateNamespace=true" "ServerSideApply=true") $syncPolicy.syncOptions) }}
+      - {{ . | quote }}
+      {{- end }}
+{{- end }}
+{{- end }}
