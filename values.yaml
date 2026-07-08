@@ -38,6 +38,11 @@ tower:
   domainName: scalex.local
   group: ops
 
+# vCluster Kubernetes does not populate legacy service-account-token Secrets reliably.
+argoWorkflows:
+  legacyServiceAccountTokenSecrets:
+    enabled: false
+
 # Tower KISS API is exposed so PXE-installed nodes can call /new and /commission.
 apiserver:
   externalBaseUrl: http://10.34.20.3:31388
