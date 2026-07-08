@@ -101,6 +101,14 @@ kiss:
         preemptionPolicy: PreemptLowerPriority
   # Use the Tower KISS apiserver NodePort for later commission submit paths.
   submitBaseUrl: http://10.34.20.3:31388
+  # Tower POC does not need out-of-band power control during commissioning.
+  # Leaving IPMI enabled on these boxes requires target-side containerd/nerdctl
+  # before Kubernetes has been installed, which blocks commissioning.
+  power:
+    intelAmt:
+      enabled: false
+    ipmi:
+      enabled: false
   tolerations:
     - key: node-role.kubernetes.io/control-plane
       operator: Exists
