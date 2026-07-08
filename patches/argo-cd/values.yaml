@@ -3,3 +3,9 @@
 server:
   service:
     type: LoadBalancer
+
+# Enable the built-in admin account for the lab-only Tower Argo UI.
+configs:
+  cm:
+    admin.enabled: true
+
