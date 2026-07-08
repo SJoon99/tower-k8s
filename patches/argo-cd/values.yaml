@@ -9,3 +9,6 @@ configs:
   cm:
     admin.enabled: true
 
+# The redis init hook completed once but can leave self-managed Argo sync stuck.
+redisSecretInit:
+  enabled: false
