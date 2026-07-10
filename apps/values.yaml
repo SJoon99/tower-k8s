@@ -8,31 +8,6 @@ cluster:
   ref: cluster
 
 apps:
-  karmada:
-    enabled: true
-    name: tower-karmada
-    namespace: karmada-system
-    project: tower-ops
-    destination:
-      name: tower
-    source:
-      repoURL: https://github.com/SJoon99/tower-k8s.git
-      path: apps/karmada
-      targetRevision: ops
-      releaseName: karmada-installer
-    annotations:
-      argocd.argoproj.io/sync-wave: "20"
-    syncPolicy:
-      automated:
-        enabled: true
-        selfHeal: true
-        prune: false
-      syncOptions:
-        - CreateNamespace=true
-        - ServerSideApply=true
-        - RespectIgnoreDifferences=true
-        - SkipDryRunOnMissingResource=true
-
   karmada-members:
     enabled: true
     name: tower-karmada-members

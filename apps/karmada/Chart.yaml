@@ -1,6 +1,0 @@
-apiVersion: v2
-name: karmada-installer
-version: 0.1.0
-appVersion: v1.18.1
-description: Argo-friendly Helm installer for the Tower Karmada control plane.
-type: application

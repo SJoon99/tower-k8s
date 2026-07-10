@@ -10,8 +10,8 @@ catalog.
 
 Current app:
 
-- `karmada` — `apps/values.yaml` creates `tower-karmada`, then
-  `apps/karmada` runs an Argo-friendly Helm installer Job. The Job executes the
-  upstream Karmada Helm chart with `apps/karmada/values.yaml` as the real chart
-  values. This avoids Argo CD treating Karmada's upstream Helm hooks as the only
-  managed resources.
+- `karmada-members` — joins Tower child clusters to the Karmada control plane.
+
+The Karmada control plane itself belongs to the reusable `eecs-k8s` app catalog
+and is selected through `org.ulagbulag.io/multicluster/karmada`. Tower keeps only
+its upstream Helm overrides in `patches/karmada/values.yaml`.

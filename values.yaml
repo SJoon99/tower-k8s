@@ -17,6 +17,7 @@ features:
   - org.ulagbulag.io/bare-metal-provisioning/kiss
   - org.ulagbulag.io/git
   - org.ulagbulag.io/gitops
+  - org.ulagbulag.io/multicluster/karmada
 
 ingress:
   domainName: tower.scalex.local

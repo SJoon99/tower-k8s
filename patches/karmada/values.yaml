@@ -1,5 +1,5 @@
 ---
-# Karmada Helm values for the Tower vCluster POC.
+# Karmada upstream Helm values for the Tower vCluster POC.
 # Baseline: helm show values karmada-charts/karmada --version v1.18.1
 # Keep this file as a minimal override instead of vendoring the full upstream values.yaml.
 
