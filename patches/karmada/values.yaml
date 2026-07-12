@@ -31,6 +31,8 @@ aggregatedApiServer:
 
 controllerManager:
   replicaCount: 1
+  featureGates:
+    PropagateDeps: true
 
 scheduler:
   replicaCount: 1
