@@ -32,3 +32,26 @@ apps:
         - ServerSideApply=true
         - RespectIgnoreDifferences=true
         - SkipDryRunOnMissingResource=true
+
+  scalex-federation:
+    enabled: true
+    name: tower-scalex-federation
+    namespace: argo
+    project: tower-ops
+    destination:
+      name: tower
+    source:
+      repoURL: https://github.com/SJoon99/scalex-federation.git
+      path: bootstrap
+      targetRevision: main
+    annotations:
+      argocd.argoproj.io/sync-wave: "40"
+    syncPolicy:
+      automated:
+        enabled: true
+        selfHeal: true
+        prune: true
+      syncOptions:
+        - CreateNamespace=true
+        - ServerSideApply=true
+        - RespectIgnoreDifferences=true

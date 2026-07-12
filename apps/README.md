@@ -8,9 +8,12 @@ catalog.
 - `templates/applications.yaml` turns those entries into Argo CD Applications.
 - `<app>/values.yaml` contains the real upstream Helm values for that app.
 
-Current app:
+Current apps:
 
-- `karmada-members` — joins Tower child clusters to the Karmada control plane.
+- `karmada-members` — joins Tower child clusters to Karmada and derives the
+  Argo `karmada` destination Secret from the in-cluster Karmada kubeconfig.
+- `scalex-federation` — bootstraps the Federation AppProject and
+  ApplicationSet.
 
 The Karmada control plane itself belongs to the reusable `eecs-k8s` app catalog
 and is selected through `org.ulagbulag.io/multicluster/karmada`. Tower keeps only

@@ -6,6 +6,13 @@ karmada:
     key: kubeconfig
   clusterNamespace: karmada-cluster
 
+argoDestination:
+  enabled: true
+  namespace: argo
+  secretName: cluster-karmada
+  name: karmada
+  server: https://karmada-apiserver.karmada-system.svc.cluster.local:5443
+
 job:
   image: alpine/k8s:1.34.0
   backoffLimit: 1

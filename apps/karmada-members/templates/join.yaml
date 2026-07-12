@@ -42,6 +42,42 @@ subjects:
   - kind: ServiceAccount
     name: {{ $fullname }}
     namespace: {{ .Release.Namespace | quote }}
+{{- if .Values.argoDestination.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $fullname }}-argo-destination
+  namespace: {{ .Values.argoDestination.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: {{ $fullname }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $fullname }}-argo-destination
+  namespace: {{ .Values.argoDestination.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: {{ $fullname }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $fullname }}-argo-destination
+subjects:
+  - kind: ServiceAccount
+    name: {{ $fullname }}
+    namespace: {{ .Release.Namespace | quote }}
+{{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -76,6 +112,41 @@ data:
       curl -fsSL "$url" -o /tmp/karmadactl.tgz
       tar -xzf /tmp/karmadactl.tgz -C /tmp karmadactl
       install -m 0755 /tmp/karmadactl /usr/local/bin/karmadactl
+    }
+
+    register_argo_destination() {
+      local namespace="$1"
+      local secret_name="$2"
+      local destination_name="$3"
+      local server="$4"
+      local ca_data cert_data key_data config
+
+      ca_data="$(kubectl config view --raw --minify --kubeconfig "$KARMADA_KUBECONFIG" -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')"
+      cert_data="$(kubectl config view --raw --minify --kubeconfig "$KARMADA_KUBECONFIG" -o jsonpath='{.users[0].user.client-certificate-data}')"
+      key_data="$(kubectl config view --raw --minify --kubeconfig "$KARMADA_KUBECONFIG" -o jsonpath='{.users[0].user.client-key-data}')"
+
+      if [ -z "$ca_data" ] || [ -z "$cert_data" ] || [ -z "$key_data" ]; then
+        echo "Karmada kubeconfig is missing CA or client certificate data" >&2
+        exit 1
+      fi
+
+      config="$(jq -nc \
+        --arg ca "$ca_data" \
+        --arg cert "$cert_data" \
+        --arg key "$key_data" \
+        '{tlsClientConfig:{insecure:false,caData:$ca,certData:$cert,keyData:$key}}')"
+
+      kubectl -n "$namespace" create secret generic "$secret_name" \
+        --from-literal=name="$destination_name" \
+        --from-literal=server="$server" \
+        --from-literal=config="$config" \
+        --dry-run=client -o yaml \
+        | kubectl apply -f - >/dev/null
+      kubectl -n "$namespace" label secret "$secret_name" \
+        argocd.argoproj.io/secret-type=cluster \
+        app.kubernetes.io/managed-by=karmada-members \
+        --overwrite >/dev/null
+      echo "registered Argo destination ${destination_name} -> ${server}"
     }
 
     build_member_kubeconfig() {
@@ -172,6 +243,13 @@ data:
       install_karmadactl
       kubectl --kubeconfig "$KARMADA_KUBECONFIG" get ns "$CLUSTER_NAMESPACE" >/dev/null 2>&1 \
         || kubectl --kubeconfig "$KARMADA_KUBECONFIG" create ns "$CLUSTER_NAMESPACE"
+{{- if .Values.argoDestination.enabled }}
+      register_argo_destination \
+        {{ .Values.argoDestination.namespace | quote }} \
+        {{ .Values.argoDestination.secretName | quote }} \
+        {{ .Values.argoDestination.name | quote }} \
+        {{ .Values.argoDestination.server | quote }}
+{{- end }}
       mkdir -p /work
 {{- range .Values.members }}
 {{- $labels := list }}
