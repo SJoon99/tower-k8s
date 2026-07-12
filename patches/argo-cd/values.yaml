@@ -1,5 +1,10 @@
 ---
 # Expose the Tower Argo CD UI through the host cluster load balancer.
+controller:
+  # Tower uses one controller for a small, fixed set of destinations. Disable
+  # alpha dynamic sharding so every newly created Application is reconciled.
+  dynamicClusterDistribution: false
+
 server:
   service:
     type: LoadBalancer
