@@ -1,0 +1,6 @@
+apps:
+  karmada-members:
+    source:
+      directory:
+        recurse: true
+        include: "{environments/poc/*.yaml,workloads/sample-http/*.yaml,policies/sample-http/*.yaml}"

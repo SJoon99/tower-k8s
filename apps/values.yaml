@@ -32,3 +32,25 @@ apps:
         - ServerSideApply=true
         - RespectIgnoreDifferences=true
         - SkipDryRunOnMissingResource=true
+
+  smurfx-federation-poc:
+    enabled: true
+    name: tower-smurfx-federation-poc
+    namespace: smurfx-poc
+    project: tower-ops
+    destination:
+      name: karmada
+    source:
+      repoURL: https://github.com/BellTigerLee/smurfx-federation.git
+      path: .
+      targetRevision: main
+      directory:
+        recurse: true
+        include: "{environments/poc/*.yaml,workloads/sample-http/*.yaml,policies/sample-http/*.yaml}"
+    syncPolicy:
+      automated:
+        enabled: false
+      syncOptions:
+        - CreateNamespace=false
+        - ServerSideApply=true
+        - SkipDryRunOnMissingResource=true

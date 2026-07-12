@@ -51,6 +51,13 @@ spec:
       path: {{ $source.path | quote }}
       {{- end }}
       targetRevision: {{ required (printf "apps.%s.source.targetRevision is required" $key) $source.targetRevision | quote }}
+      {{- if hasKey $source "directory" }}
+      {{- if not (kindIs "map" $source.directory) }}
+      {{- fail (printf "apps.%s.source.directory must be a map" $key) }}
+      {{- end }}
+      directory:
+{{ toYaml $source.directory | nindent 8 }}
+      {{- end }}
       {{- if or $source.releaseName $app.valueFiles $source.helm }}
       helm:
         {{- if $source.releaseName }}
