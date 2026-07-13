@@ -62,9 +62,15 @@ directories alone does not retire Applications already stored in Argo CD.
    Keep `b-cilium-lb-ipam`, `c-cilium-lb-ipam`,
    `tower-karmada-members`, and `tower-scalex-federation`; the new common
    parents adopt those same Application names.
-4. Sync `tower`, then `tower-remote-gitops`, then the `b` and `c` roots.
-5. Confirm the new common Applications are `Synced/Healthy` before restoring
-   automatic sync.
+4. Sync `tower`, then `tower-remote-gitops`.
+5. The old B/C roots rendered and tracked themselves. After
+   `tower-remote-gitops` has applied the new child-only root specs, confirm the
+   B/C root finalizers are empty, delete only the `Application/b` and
+   `Application/c` CRs, and hard-refresh `tower-remote-gitops`. It recreates
+   both roots with `tower-remote-gitops` tracking while their child
+   Applications and workloads remain running.
+6. Confirm the recreated `b` and `c` roots and all new common Applications are
+   `Synced/Healthy` before restoring automatic sync.
 
 The remote app creates Application CRs only. Argo repository credentials and
 the pre-existing `cluster-b`/`cluster-c` destination Secrets remain bootstrap
