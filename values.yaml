@@ -11,6 +11,11 @@ cluster:
     loadBalancer:
       ipv4: ""
 
+# The shared-node vCluster uses the node4 host cluster's CNI data plane.
+applications:
+  disabled:
+    - cilium
+
 # Keep the first Tower control-plane proof intentionally small.
 # eecs-k8s expands this through its feature dependency graph.
 features:
