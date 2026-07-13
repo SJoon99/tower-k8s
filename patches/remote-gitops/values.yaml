@@ -1,0 +1,76 @@
+---
+remoteGitOps:
+  applications:
+    - name: b
+      project: tower-ops
+      destination:
+        name: tower
+        namespace: argo
+      sources:
+        - repoURL: https://github.com/SJoon99/eecs-k8s.git
+          targetRevision: main
+          path: .
+          helm:
+            releaseName: smartx
+            valueFiles:
+              - $cluster/values.yaml
+            valuesObject:
+              applications:
+                root:
+                  enabled: false
+        - repoURL: https://github.com/SJoon99/b-k8s.git
+          targetRevision: ops
+          ref: cluster
+      syncPolicy:
+        automated:
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - RespectIgnoreDifferences=true
+          - ServerSideApply=true
+    - name: c
+      project: tower-ops
+      destination:
+        name: tower
+        namespace: argo
+      sources:
+        - repoURL: https://github.com/SJoon99/eecs-k8s.git
+          targetRevision: main
+          path: .
+          helm:
+            releaseName: smartx
+            valueFiles:
+              - $cluster/values.yaml
+            valuesObject:
+              applications:
+                root:
+                  enabled: false
+        - repoURL: https://github.com/SJoon99/c-k8s.git
+          targetRevision: ops
+          ref: cluster
+      syncPolicy:
+        automated:
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - RespectIgnoreDifferences=true
+          - ServerSideApply=true
+    - name: tower-scalex-federation
+      annotations:
+        argocd.argoproj.io/sync-wave: "40"
+      project: tower-ops
+      destination:
+        name: tower
+        namespace: argo
+      source:
+        repoURL: https://github.com/SJoon99/scalex-federation.git
+        targetRevision: main
+        path: bootstrap
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - RespectIgnoreDifferences=true
+          - ServerSideApply=true

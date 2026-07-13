@@ -20,14 +20,52 @@ node4 host cluster
             └─ cluster values/patches source: tower-k8s
 ```
 
-## Initial Tower feature set
+## Tower feature set
 
-The first POC intentionally enables only:
+Tower selects common implementations from `eecs-k8s` and keeps only concrete
+cluster intent in this repository:
 
 ```yaml
 features:
+  - org.ulagbulag.io/bare-metal-provisioning/kiss
+  - org.ulagbulag.io/git
   - org.ulagbulag.io/gitops
+  - org.ulagbulag.io/gitops/remote
+  - org.ulagbulag.io/multicluster/karmada
+  - org.ulagbulag.io/multicluster/karmada/members
 ```
 
-The eecs-k8s feature graph expands this into the minimum GitOps/Tower control
-plane surface before OpenARK/KISS and child-cluster provisioning are added.
+`remote-gitops` owns the B, C, and Federation root Applications. The Karmada
+membership app owns push-mode joins and the `karmada` Argo destination. The
+initial `tower` root Application remains the one bootstrap boundary.
+
+## One-time local-app ownership handoff
+
+This migration must be performed in a controlled window; deleting repository
+directories alone does not retire Applications already stored in Argo CD.
+
+1. Publish `eecs-k8s:main` and each cluster repository's `ops` branch.
+2. Temporarily suspend automatic sync for the existing `tower`, `b`, and `c`
+   roots.
+3. Remove the following legacy Applications **without cascading their managed
+   Kubernetes resources**:
+
+   ```text
+   tower-apps
+   b-local-apps
+   c-local-apps
+   b-rook-ceph-poc-config
+   c-rook-ceph-poc-config
+   b-rook-ceph-rgw-poc
+   ```
+
+   Keep `b-cilium-lb-ipam`, `c-cilium-lb-ipam`,
+   `tower-karmada-members`, and `tower-scalex-federation`; the new common
+   parents adopt those same Application names.
+4. Sync `tower`, then `tower-remote-gitops`, then the `b` and `c` roots.
+5. Confirm the new common Applications are `Synced/Healthy` before restoring
+   automatic sync.
+
+The remote app creates Application CRs only. Argo repository credentials and
+the pre-existing `cluster-b`/`cluster-c` destination Secrets remain bootstrap
+credentials and are intentionally not stored in Git.
