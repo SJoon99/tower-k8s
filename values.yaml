@@ -25,6 +25,7 @@ features:
   - org.ulagbulag.io/gitops/remote
   - org.ulagbulag.io/multicluster/karmada
   - org.ulagbulag.io/multicluster/karmada/members
+  - org.ulagbulag.io/multicluster/karmada/objectbucket-api
 
 ingress:
   domainName: tower.scalex.local

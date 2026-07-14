@@ -33,10 +33,13 @@ features:
   - org.ulagbulag.io/gitops/remote
   - org.ulagbulag.io/multicluster/karmada
   - org.ulagbulag.io/multicluster/karmada/members
+  - org.ulagbulag.io/multicluster/karmada/objectbucket-api
 ```
 
 `remote-gitops` owns the B, C, and Federation root Applications. The Karmada
 membership app owns push-mode joins and the `karmada` Argo destination. The
+`karmada-objectbucket-api` app installs the OBC API into that Karmada
+destination so feature releases can submit namespaced bucket claims. The
 initial `tower` root Application remains the one bootstrap boundary.
 
 ## One-time local-app ownership handoff
