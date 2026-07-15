@@ -97,3 +97,44 @@ directories alone does not retire Applications already stored in Argo CD.
 The remote app creates Application CRs only. Argo repository credentials and
 the pre-existing `cluster-b`/`cluster-c` destination Secrets remain bootstrap
 credentials and are intentionally not stored in Git.
+
+## Retired Karmada OBC bridge
+
+The temporary `tower-karmada-objectbucket-api` Application is retired. Before
+removing it from a live environment, operators must perform this sequence:
+
+1. Confirm every member OBC has been adopted by its target `*-k8s` Infra app.
+2. Record the member OBC UID and hashes of the generated Secret/ConfigMap.
+3. Remove the Federation OBC policy/source only with member-resource
+   preservation enabled, then verify its Karmada ResourceBinding and Work are
+   gone.
+4. Remove the kept child Application explicitly after the Tower root no longer
+   renders it.
+5. Delete `objectbucketclaims.objectbucket.io` from the Karmada API only when
+   Karmada contains zero OBC instances.
+6. Recheck the member OBC UID, credential hashes, Argo tracking owner, and POC
+   workload/HTTP result.
+
+The member clusters retain their own Rook OBC CRDs. This procedure removes only
+the transitional CRD from the Tower Karmada API.
+
+For an existing release namespace that Karmada already propagated, hand off
+namespace ownership separately:
+
+1. Sync `b-workload-namespace` and `c-workload-namespace`, then record and
+   verify that both member Namespace UIDs remain unchanged.
+2. Sync the Federation ApplicationSet change and verify the Karmada source
+   Namespace has `namespace.karmada.io/skip-auto-propagation=true`.
+3. For each old namespace Work, set
+   `spec.preserveResourcesOnDeletion=true`, verify it, and only then delete the
+   Work.
+4. Confirm no namespace Work was recreated and the member Namespace UIDs are
+   still unchanged.
+5. Remove only the stale `karmada.io/*`, `work.karmada.io/*`, and
+   `resourcetemplate.karmada.io/*` tracking metadata from member Namespaces.
+6. Verify their Argo tracking IDs point to `b-workload-namespace` and
+   `c-workload-namespace`, and recheck the B OBC UID/credential hashes.
+
+Never delete a namespace Work with the default
+`preserveResourcesOnDeletion=false`; that can delete the member Namespace and
+all namespaced Infra dependencies.
