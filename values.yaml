@@ -15,6 +15,11 @@ cluster:
 applications:
   disabled:
     - cilium
+    # Harbor is exposed directly through its Tower LoadBalancer. The vCluster
+    # does not need the SmartX ingress/DNS stack supplied by KISS clusters.
+    - ingress-tower-scalex-local-exdns-1
+    - ingress-tower-scalex-local-exdns-2
+    - ingress-tower-scalex-local-ingress-nginx
 
 # Keep the first Tower control-plane proof intentionally small.
 # eecs-k8s expands this through its feature dependency graph.
