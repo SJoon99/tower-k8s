@@ -1,0 +1,58 @@
+---
+# Harbor runs in Tower. Only registry blobs use site-b RGW; Harbor's internal
+# database, Redis, job logs, and Trivy cache use Tower PVCs translated to the
+# node4 host cluster's default StorageClass.
+expose:
+  type: loadBalancer
+  tls:
+    enabled: false
+  loadBalancer:
+    name: harbor
+    annotations:
+      lbipam.cilium.io/ips: "10.34.25.18"
+    ports:
+      httpPort: 80
+    sourceRanges: []
+
+existingSecretAdminPassword: harbor-admin-bootstrap
+existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+
+persistence:
+  enabled: true
+  resourcePolicy: keep
+  persistentVolumeClaim:
+    jobservice:
+      jobLog:
+        storageClass: ""
+        accessMode: ReadWriteOnce
+        size: 2Gi
+    database:
+      storageClass: ""
+      accessMode: ReadWriteOnce
+      size: 5Gi
+    redis:
+      storageClass: ""
+      accessMode: ReadWriteOnce
+      size: 2Gi
+    trivy:
+      storageClass: ""
+      accessMode: ReadWriteOnce
+      size: 5Gi
+  imageChartStorage:
+    disableredirect: true
+    type: s3
+    s3:
+      existingSecret: harbor-registry-s3
+      region: scalex-poc
+      bucket: tower-harbor-registry
+      regionendpoint: http://10.33.142.10
+      secure: false
+      v4auth: true
+      chunksize: "5242880"
+      rootdirectory: /harbor
+
+updateStrategy:
+  type: Recreate
+
+# Argo CD owns lifecycle; Helm migration hooks otherwise remain as stale jobs.
+enableMigrateHelmHook: false

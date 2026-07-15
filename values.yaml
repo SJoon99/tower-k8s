@@ -26,6 +26,7 @@ features:
   - org.ulagbulag.io/multicluster/karmada
   - org.ulagbulag.io/multicluster/karmada/members
   - org.ulagbulag.io/multicluster/karmada/objectbucket-api
+  - org.ulagbulag.io/registry/container/harbor
 
 ingress:
   domainName: tower.scalex.local
@@ -34,6 +35,11 @@ ingress:
     ingress: 0.0.0.0
     ns1: 0.0.0.0
     ns2: 0.0.0.0
+
+harbor:
+  # The Harbor workloads run in Tower while registry blobs are stored in the
+  # dedicated bucket provided by site-b RGW.
+  externalURL: http://10.34.25.18
 
 repo:
   baseUrl: https://github.com

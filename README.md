@@ -34,6 +34,7 @@ features:
   - org.ulagbulag.io/multicluster/karmada
   - org.ulagbulag.io/multicluster/karmada/members
   - org.ulagbulag.io/multicluster/karmada/objectbucket-api
+  - org.ulagbulag.io/registry/container/harbor
 ```
 
 `remote-gitops` owns the B, C, and Federation root Applications. The Karmada
@@ -41,6 +42,25 @@ membership app owns push-mode joins and the `karmada` Argo destination. The
 `karmada-objectbucket-api` app installs the OBC API into that Karmada
 destination so feature releases can submit namespaced bucket claims. The
 initial `tower` root Application remains the one bootstrap boundary.
+
+## Tower Harbor
+
+Harbor workloads run in the Tower vCluster and are exposed at
+`http://10.34.25.18`. Registry image blobs use the dedicated
+`tower-harbor-registry` bucket on site-b RGW (`http://10.33.142.10`), while the
+internal database, Redis, job logs, and Trivy cache use Tower PVCs translated
+to the node4 host cluster's default StorageClass.
+
+Two credential Secrets are bootstrap boundaries in `harbor` namespace:
+
+```text
+harbor-registry-s3     # copied from the site-b OBC Secret with Harbor key names
+harbor-admin-bootstrap # initial built-in admin password
+```
+
+Only Secret names are stored in Git. Bucket access keys and passwords must not
+be committed. The user-facing `netai` account is created through the Harbor API
+after the deployment becomes ready.
 
 ## One-time local-app ownership handoff
 
