@@ -33,15 +33,14 @@ features:
   - org.ulagbulag.io/gitops/remote
   - org.ulagbulag.io/multicluster/karmada
   - org.ulagbulag.io/multicluster/karmada/members
-  - org.ulagbulag.io/multicluster/karmada/objectbucket-api
   - org.ulagbulag.io/registry/container/harbor
 ```
 
 `remote-gitops` owns the B, C, and Federation root Applications. The Karmada
-membership app owns push-mode joins and the `karmada` Argo destination. The
-`karmada-objectbucket-api` app installs the OBC API into that Karmada
-destination so feature releases can submit namespaced bucket claims. The
-initial `tower` root Application remains the one bootstrap boundary.
+membership app owns push-mode joins and the `karmada` Argo destination. Member
+clusters own storage claims through their Infra repos; Federation sends only
+workloads and non-secret runtime bindings to Karmada. The initial `tower` root
+Application remains the one bootstrap boundary.
 
 ## Tower Harbor
 
