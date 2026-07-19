@@ -144,6 +144,7 @@ kiss:
   apt:
     mirror:
       uri: http://mirror.kakao.com/ubuntu
+      portsUri: http://ports.ubuntu.com/ubuntu-ports
   auth:
     ssh:
       key:
