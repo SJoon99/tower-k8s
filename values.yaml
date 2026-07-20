@@ -4,7 +4,9 @@
 
 cluster:
   name: tower
-  group: ops
+  # eecs-k8s uses cluster.group as the cluster-values repo targetRevision.
+  # main is the canonical live branch for every cluster repository.
+  group: main
   singleNode: false
   standalone: false
   nameservers:
@@ -56,6 +58,7 @@ tower:
   cluster: tower
   controlPlane: true
   domainName: scalex.local
+  # Argo project/group identity, not a Git branch.
   group: ops
 
 # vCluster Kubernetes does not populate legacy service-account-token Secrets reliably

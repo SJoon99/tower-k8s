@@ -19,7 +19,7 @@ remoteGitOps:
                 root:
                   enabled: false
         - repoURL: https://github.com/SJoon99/b-k8s.git
-          targetRevision: ops
+          targetRevision: main
           ref: cluster
       syncPolicy:
         automated:
@@ -46,7 +46,7 @@ remoteGitOps:
                 root:
                   enabled: false
         - repoURL: https://github.com/SJoon99/c-k8s.git
-          targetRevision: ops
+          targetRevision: main
           ref: cluster
       syncPolicy:
         automated:

@@ -66,7 +66,7 @@ after the deployment becomes ready.
 This migration must be performed in a controlled window; deleting repository
 directories alone does not retire Applications already stored in Argo CD.
 
-1. Publish `eecs-k8s:main` and each cluster repository's `ops` branch.
+1. Publish `eecs-k8s:main` and each cluster repository's `main` branch.
 2. Temporarily suspend automatic sync for the existing `tower`, `b`, and `c`
    roots.
 3. Remove the following legacy Applications **without cascading their managed
