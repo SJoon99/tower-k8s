@@ -65,7 +65,7 @@ remoteGitOps:
       source:
         repoURL: https://github.com/SJoon99/scalex-federation.git
         targetRevision: main
-        path: bootstrap
+        path: argocd
       syncPolicy:
         automated:
           prune: true
