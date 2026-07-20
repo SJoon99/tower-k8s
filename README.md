@@ -34,6 +34,7 @@ features:
   - org.ulagbulag.io/multicluster/karmada
   - org.ulagbulag.io/multicluster/karmada/members
   - org.ulagbulag.io/registry/container/harbor
+  - org.ulagbulag.io/workflow/tekton
 ```
 
 `remote-gitops` owns the B, C, and Federation root Applications. The Karmada
@@ -60,6 +61,25 @@ harbor-admin-bootstrap # initial built-in admin password
 Only Secret names are stored in Git. Bucket access keys and passwords must not
 be committed. The user-facing `netai` account is created through the Harbor API
 after the deployment becomes ready.
+
+## Tower Tekton Pipelines
+
+The `tower-tekton-pipeline` Argo CD Application installs the CDF Tekton Pipeline
+Helm chart `1.14.0` control plane into its upstream-required
+`tekton-pipelines` namespace. Tekton 1.14.0 CRDs and admission webhook templates
+hard-code that service namespace, so moving the control plane would leave CRD
+conversion and admission webhooks pointing at a missing service.
+
+Child `PipelineRun` and `TaskRun` resources execute in the separately managed
+`tower-ci` workload namespace. Common chart values and digest-pinned Tekton
+images are owned by `eecs-k8s/apps/tekton-pipeline/`; Tower-specific values are
+kept in `patches/tekton-pipeline/values.yaml`, and
+`patches/workload-namespace/values.yaml` owns the protected CI namespace.
+
+This initial deployment is Pipelines-only. It does not create Tekton Triggers,
+an EventListener, an ingress, or a GitHub App, so no inbound public IP is
+required. PipelineRuns are submitted from inside the Tower control plane until
+an authenticated public webhook endpoint is available.
 
 ## One-time local-app ownership handoff
 
