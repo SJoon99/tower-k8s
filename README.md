@@ -86,7 +86,8 @@ an authenticated public webhook endpoint is available.
 This migration must be performed in a controlled window; deleting repository
 directories alone does not retire Applications already stored in Argo CD.
 
-1. Publish `eecs-k8s:main` and each cluster repository's `main` branch.
+1. Publish `eecs-k8s:ops` and `tower-k8s:ops`. Member cluster repositories
+   continue to use their `main` branches.
 2. Temporarily suspend automatic sync for the existing `tower`, `b`, and `c`
    roots.
 3. Remove the following legacy Applications **without cascading their managed
