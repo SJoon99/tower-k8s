@@ -34,6 +34,7 @@ features:
   - org.ulagbulag.io/multicluster/karmada
   - org.ulagbulag.io/multicluster/karmada/members
   - org.ulagbulag.io/registry/container/harbor
+  - org.ulagbulag.io/workflow/tekton
 ```
 
 `remote-gitops` owns the B, C, and Federation root Applications. The Karmada
@@ -61,12 +62,32 @@ Only Secret names are stored in Git. Bucket access keys and passwords must not
 be committed. The user-facing `netai` account is created through the Harbor API
 after the deployment becomes ready.
 
+## Tower Tekton Pipelines
+
+The `tower-tekton-pipeline` Argo CD Application installs the CDF Tekton Pipeline
+Helm chart `1.14.0` control plane into its upstream-required
+`tekton-pipelines` namespace. Tekton 1.14.0 CRDs and admission webhook templates
+hard-code that service namespace, so moving the control plane would leave CRD
+conversion and admission webhooks pointing at a missing service.
+
+Child `PipelineRun` and `TaskRun` resources execute in the separately managed
+`tower-ci` workload namespace. Common chart values and digest-pinned Tekton
+images are owned by `eecs-k8s/apps/tekton-pipeline/`; Tower-specific values are
+kept in `patches/tekton-pipeline/values.yaml`, and
+`patches/workload-namespace/values.yaml` owns the protected CI namespace.
+
+This initial deployment is Pipelines-only. It does not create Tekton Triggers,
+an EventListener, an ingress, or a GitHub App, so no inbound public IP is
+required. PipelineRuns are submitted from inside the Tower control plane until
+an authenticated public webhook endpoint is available.
+
 ## One-time local-app ownership handoff
 
 This migration must be performed in a controlled window; deleting repository
 directories alone does not retire Applications already stored in Argo CD.
 
-1. Publish `eecs-k8s:main` and each cluster repository's `main` branch.
+1. Publish `eecs-k8s:ops` and `tower-k8s:ops`. Member cluster repositories
+   continue to use their `main` branches.
 2. Temporarily suspend automatic sync for the existing `tower`, `b`, and `c`
    roots.
 3. Remove the following legacy Applications **without cascading their managed

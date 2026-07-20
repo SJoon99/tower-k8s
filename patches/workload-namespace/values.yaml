@@ -1,0 +1,10 @@
+---
+namespaces:
+  - name: tower-ci
+    owner: tower-k8s
+    labels:
+      app.kubernetes.io/part-of: tekton-ci
+      pod-security.kubernetes.io/audit: restricted
+      pod-security.kubernetes.io/enforce: restricted
+      pod-security.kubernetes.io/warn: restricted
+      scalex.io/workload-type: ci

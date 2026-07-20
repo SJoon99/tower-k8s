@@ -5,8 +5,8 @@
 cluster:
   name: tower
   # eecs-k8s uses cluster.group as the cluster-values repo targetRevision.
-  # main is the canonical live branch for every cluster repository.
-  group: main
+  # Tower control-plane changes are promoted through the ops branch.
+  group: ops
   singleNode: false
   standalone: false
   nameservers:
@@ -33,6 +33,8 @@ features:
   - org.ulagbulag.io/multicluster/karmada
   - org.ulagbulag.io/multicluster/karmada/members
   - org.ulagbulag.io/registry/container/harbor
+  - org.ulagbulag.io/workflow/tekton
+  - org.ulagbulag.io/workload-namespace
 
 ingress:
   domainName: tower.scalex.local
@@ -51,7 +53,7 @@ repo:
   baseUrl: https://github.com
   owner: SJoon99
   name: eecs-k8s
-  revision: main
+  revision: ops
 
 # This repo represents the Tower control-plane cluster itself.
 tower:
