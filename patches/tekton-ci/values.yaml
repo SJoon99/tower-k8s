@@ -35,7 +35,7 @@ workspace:
   persistentVolumeClaim:
     enabled: true
     name: source-workspace
-    storageClassName: nfs-csi
+    storageClassName: ""
     accessModes:
       - ReadWriteMany
     size: 10Gi

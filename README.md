@@ -105,6 +105,7 @@ directories alone does not retire Applications already stored in Argo CD.
    Keep `b-cilium-lb-ipam`, `c-cilium-lb-ipam`,
    `tower-karmada-members`, and `tower-scalex-federation`; the new common
    parents adopt those same Application names.
+
 4. Sync `tower`, then `tower-remote-gitops`.
 5. The old B/C roots rendered and tracked themselves. After
    `tower-remote-gitops` has applied the new child-only root specs, confirm the
