@@ -40,5 +40,10 @@ workspace:
       - ReadWriteMany
     size: 10Gi
 
-harbor:
-  credentialsSecretName: harbor-builder
+ci:
+  enabled: true
+  registry:
+    host: 10.34.25.18
+    repositoryPrefix: tower-ci
+    insecure: true
+    credentialsSecretName: harbor-builder
