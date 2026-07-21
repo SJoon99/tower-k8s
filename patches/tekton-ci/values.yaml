@@ -35,7 +35,7 @@ workspace:
   persistentVolumeClaim:
     enabled: true
     name: source-workspace
-    storageClassName: ""
+    storageClassName: "rook-ceph-filesystem-hot"
     accessModes:
       - ReadWriteMany
     size: 10Gi
