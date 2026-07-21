@@ -35,10 +35,15 @@ workspace:
   persistentVolumeClaim:
     enabled: true
     name: source-workspace
-    storageClassName: nfs-csi
+    storageClassName: "rook-ceph-filesystem-hot"
     accessModes:
       - ReadWriteMany
     size: 10Gi
 
-harbor:
-  credentialsSecretName: harbor-builder
+ci:
+  enabled: true
+  registry:
+    host: 10.34.25.18
+    repositoryPrefix: tower-ci
+    insecure: true
+    credentialsSecretName: harbor-builder
