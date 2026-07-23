@@ -59,3 +59,32 @@ promotion:
     appIDKey: appID
     installationIDKey: installationID
     privateKeyKey: privateKey
+
+githubWebhook:
+  enabled: true
+  names:
+    serviceAccount: tekton-ci-listener
+    eventListener: child-build-github
+    triggerBinding: child-build-github
+    triggerTemplate: child-build-github
+    ingressNetworkPolicy: tekton-ci-listener-ingress
+  secret:
+    # Runtime-managed HMAC key; the Secret value is intentionally not in Git.
+    name: github-webhook-secret
+    key: secretToken
+  repository:
+    fullName: BellTigerLee/temp-poc
+    branchRef: refs/heads/main
+  pipeline:
+    name: child-build
+    runnerServiceAccount: tekton-ci-runner
+    childName: temp-poc
+    chartPath: chart
+    buildTargets: >-
+      [{"name":"dataset-ingest","valuesKey":"datasetIngest","context":".","dockerfile":"images/dataset-ingest/Dockerfile"},{"name":"batch-analyzer","valuesKey":"batchAnalyzer","context":".","dockerfile":"images/batch-analyzer/Dockerfile"},{"name":"report-generator","valuesKey":"reportGenerator","context":".","dockerfile":"images/report-generator/Dockerfile"}]
+    timeout: 1h
+    workspace:
+      storageClassName: rook-ceph-block-hot
+      accessModes:
+        - ReadWriteOnce
+      size: 5Gi
