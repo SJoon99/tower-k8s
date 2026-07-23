@@ -35,7 +35,8 @@ features:
   - org.ulagbulag.io/registry/container/harbor
   - org.ulagbulag.io/workflow/tekton
   - org.ulagbulag.io/workflow/tekton/ci
-  # GitHub webhook receiver for the Tower Tekton child-build pipeline.
+  # Tekton Triggers control plane. Repository-specific listeners are owned by
+  # their workload repository rather than this cluster preset.
   - org.ulagbulag.io/workflow/tekton/triggers
   - org.ulagbulag.io/workload-namespace
 
