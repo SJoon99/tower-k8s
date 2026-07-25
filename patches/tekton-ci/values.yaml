@@ -51,9 +51,9 @@ ci:
 promotion:
   enabled: true
   federation:
-    repoURL: https://github.com/SJoon99/scalex-federation.git
+    repoURL: https://github.com/SmartX-Team/sandbox-scalex-federation.git
     baseBranch: main
-    githubRepository: SJoon99/scalex-federation
+    githubRepository: SmartX-Team/sandbox-scalex-federation
   github:
     credentialsSecretName: federation-promotion-github-app
     appIDKey: appID
