@@ -18,7 +18,7 @@ remoteGitOps:
               applications:
                 root:
                   enabled: false
-        - repoURL: https://github.com/SJoon99/b-k8s.git
+        - repoURL: https://github.com/SmartX-Team/b-k8s.git
           targetRevision: main
           ref: cluster
       syncPolicy:
@@ -45,7 +45,7 @@ remoteGitOps:
               applications:
                 root:
                   enabled: false
-        - repoURL: https://github.com/SJoon99/c-k8s.git
+        - repoURL: https://github.com/SmartX-Team/c-k8s.git
           targetRevision: main
           ref: cluster
       syncPolicy:
@@ -63,7 +63,7 @@ remoteGitOps:
         name: tower
         namespace: argo
       source:
-        repoURL: https://github.com/SJoon99/scalex-federation.git
+        repoURL: https://github.com/SmartX-Team/sandbox-scalex-federation.git
         targetRevision: main
         path: argocd
       syncPolicy:

@@ -59,6 +59,12 @@ repo:
   name: eecs-k8s
   revision: ops
 
+clusterRepository:
+  baseUrl: https://github.com
+  owner: SmartX-Team
+  name: sandbox-tower-k8s
+  revision: ops
+
 # This repo represents the Tower control-plane cluster itself.
 tower:
   cluster: tower
