@@ -63,7 +63,7 @@ remoteGitOps:
         name: tower
         namespace: argo
       source:
-        repoURL: https://github.com/SmartX-Team/sandbox-scalex-federation.git
+        repoURL: https://github.com/SmartX-Team/scalex-sandbox-federation.git
         targetRevision: main
         path: .
       syncPolicy:
