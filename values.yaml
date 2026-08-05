@@ -1,6 +1,6 @@
 ---
 # TowerX/mobilex-style preset values for the ScaleX Repo POC.
-# Base/framework repo: https://github.com/SmartX-Team/smartx-k8s/tree/scalex-sandbox-smartx-k8s
+# Base/framework repo: https://github.com/SJoon99/eecs-k8s/tree/main
 
 cluster:
   name: tower
@@ -55,14 +55,14 @@ harbor:
 
 repo:
   baseUrl: https://github.com
-  owner: SmartX-Team
-  name: smartx-k8s
-  revision: scalex-sandbox-smartx-k8s
+  owner: SJoon99
+  name: eecs-k8s
+  revision: main
 
 clusterRepository:
   baseUrl: https://github.com
-  owner: SmartX-Team
-  name: sandbox-tower-k8s
+  owner: SJoon99
+  name: tower-k8s
   revision: ops
 
 # This repo represents the Tower control-plane cluster itself.
