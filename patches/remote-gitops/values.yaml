@@ -21,6 +21,7 @@ remoteGitOps:
         - repoURL: https://github.com/SJoon99/b-k8s.git
           targetRevision: main
           ref: cluster
+          path: apps
       syncPolicy:
         automated:
           selfHeal: true
@@ -48,6 +49,7 @@ remoteGitOps:
         - repoURL: https://github.com/SJoon99/c-k8s.git
           targetRevision: main
           ref: cluster
+          path: apps
       syncPolicy:
         automated:
           selfHeal: true
