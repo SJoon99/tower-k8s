@@ -219,3 +219,36 @@ pxeEdge:
     - key: node-role.kubernetes.io/control-plane
       operator: Exists
       effect: NoSchedule
+
+kubeletCSRApprover:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - netai-eecs-multi
+            - sandbox-2
+            - sandbox-4
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        preference:
+          matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - netai-eecs-multi
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/instance: kubelet-csr-approver
+            app.kubernetes.io/name: kubelet-csr-approver
+        topologyKey: kubernetes.io/hostname
+  extraTolerations:
+  - key: storage-node
+    operator: Equal
+    value: stage
+    effect: NoSchedule
