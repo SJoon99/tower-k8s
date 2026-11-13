@@ -169,7 +169,7 @@ kiss:
   os:
     dist: ubuntu
     version: "24.04"
-    revision: "4"
+    revision: "5"
     channel: release
     kernel: stable
   group:
