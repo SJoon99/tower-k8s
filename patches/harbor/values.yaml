@@ -54,5 +54,10 @@ persistence:
 updateStrategy:
   type: Recreate
 
+trivy:
+  resources:
+    requests:
+      cpu: 80m
+
 # Argo CD owns lifecycle; Helm migration hooks otherwise remain as stale jobs.
 enableMigrateHelmHook: false
